@@ -2,3 +2,7 @@
 *.pyc
 __pycache__/
 **.cpython-39.pyc
+logs/
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup

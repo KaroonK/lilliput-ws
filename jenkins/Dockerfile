@@ -1,13 +1,12 @@
-FROM jenkins/jenkins:alpine
+FROM jenkins/jenkins:lts
 
 USER root
 ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
+RUN apt-get update && apt-get install -y python3 python3-pip
+RUN pip3 install --no-cache --upgrade pip setuptools unittest-xml-reporting
 
 USER jenkins
 # unsecure admin user for local testing only
 ENV JAVA_OPTS='-Djenkins.install.runSetupWizard=false'
-COPY --chown=jenkins:jenkins create-job.groovy /usr/share/jenkins/ref/init.groovy.d/create-job.groovy
-RUN install-plugins.sh git workflow-job workflow-aggregator extended-choice-parameter
+COPY --chown=jenkins:jenkins * /usr/share/jenkins/ref/init.groovy.d/
+RUN install-plugins.sh git workflow-job workflow-aggregator extended-choice-parameter pipeline-utility-steps junit pagerduty
