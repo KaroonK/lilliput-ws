@@ -1,7 +1,7 @@
 pipeline{
   agent any
   parameters {
-    extendedChoice description: 'Test(s) to fail', multiSelectDelimiter: ',', name: 'failTests',  quoteValue: false, saveJSONParameterToFile: false, type: 'PT_CHECKBOX', value: 'First,Second,Third', visibleItemCount: 3
+    extendedChoice description: 'Test(s) to fail', multiSelectDelimiter: ',', name: 'failTests',  quoteValue: false, saveJSONParameterToFile: false, type: 'PT_CHECKBOX', value: 'first,second,third', visibleItemCount: 3
   }
   stages{
     stage("Clone"){
@@ -12,9 +12,10 @@ pipeline{
     stage("Update variables"){
       steps{
         script{
-            if (env.failTests.contains('first')){ env.first=SOMETHING}
-            if (env.failTests.contains('second')){ env.second=SOMETHING}
-            if (env.failTests.contains('third')){ env.third=SOMETHING}
+            env.failTests = env.failTests.toLowerCase()
+            if (env.failTests != null && env.failTests.contains('first')){ env.setProperty('first', 'SOMETHING')}
+            if (env.failTests != null && env.failTests.contains('second')){ env.setProperty('second', 'SOMETHING')}
+            if (env.failTests != null && env.failTests.contains('third')){ env.setProperty('third', 'SOMETHING')}
 
         }
       }
@@ -22,7 +23,7 @@ pipeline{
     stage("Execute Tests"){
       steps{
         script{
-            echo env.failTests
+            sh 'python -m unittest'
         }
       }
     }
